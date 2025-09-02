@@ -1,5 +1,6 @@
 package com.nsergio.dev.myrickandmortyapp.data.remote.response
 
+import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,4 +14,14 @@ data class SingleCharacterResponse(
     val gender: String,
     val image: String
 
-)
+) {
+    fun toDomain(): SingleCharacterModel {
+        return SingleCharacterModel(
+            id = idCharacter,
+            name = name,
+            isAlive = status.equals("alive", ignoreCase = true),
+            gender = gender,
+            image = image
+        )
+    }
+}
