@@ -20,7 +20,12 @@ fun EpisodesScreen() {
                 .background(Color.Red),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text = "Episodes")
+            val hello = helloName()
+            Text(text = "Episodes \n\n $hello")
         }
     }
 }
+
+//is like a interface than a class must implements to override method
+//in this case, ios and android must implement and return his own implementation
+expect fun helloName(): String
