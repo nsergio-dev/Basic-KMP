@@ -33,6 +33,10 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
         }
+        //for ios dependencies
+        iosMain.dependencies {
+
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -42,6 +46,9 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.navigation.compose)
+            implementation(libs.material.icons.extended)
+            implementation(libs.material.icons.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
