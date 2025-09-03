@@ -8,12 +8,10 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import coil3.size.Size
 
 @Composable
 fun RemoteAsyncImage(
     model: Any,
-    size: Size = Size.ORIGINAL,
     crossfade: Boolean = false,
     onLoading: @Composable () -> Unit = {},
     onError: @Composable () -> Unit = {},
@@ -24,7 +22,6 @@ fun RemoteAsyncImage(
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(platformContext)
             .data(model)
-            .size(size)
             .crossfade(crossfade)
             .build()
     )

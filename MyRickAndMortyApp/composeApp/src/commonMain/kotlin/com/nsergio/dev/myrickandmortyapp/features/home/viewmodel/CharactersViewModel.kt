@@ -23,7 +23,7 @@ class CharactersViewModel(
 
     fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(5_000L)
+            delay(3_000L)
             val character = getRandCharacterUseCase.invoke()
             _state.value = _state.value.copy(characterOfTheDay = character)
         }
