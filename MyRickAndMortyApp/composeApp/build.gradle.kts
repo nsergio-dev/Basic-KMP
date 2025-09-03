@@ -30,6 +30,8 @@ kotlin {
     }
     
     sourceSets {
+
+        task("testClasses")
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -47,9 +49,10 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.navigation.compose)
+            implementation(libs.viewmodel.compose)
             implementation(libs.material.icons.extended)
             implementation(libs.material.icons.core)
 
@@ -62,6 +65,10 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.kotlin.serialization)
+
+            //coil for images
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

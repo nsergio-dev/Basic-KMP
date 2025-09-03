@@ -3,9 +3,11 @@ package com.nsergio.dev.myrickandmortyapp.features.home.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -15,6 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import com.nsergio.dev.myrickandmortyapp.core.navigation.bottonnavigation.BottomBarItem
 import com.nsergio.dev.myrickandmortyapp.core.navigation.bottonnavigation.BottomNavWrapper
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
 
@@ -22,6 +26,9 @@ fun HomeScreen() {
     val navController = rememberNavController()
 
     Scaffold(
+        topBar = {
+            TopAppBar(title = { Text(text = "Rick and Morty App") })
+        },
         bottomBar = {
             BottomBar(
                 navController = navController,
@@ -76,3 +83,12 @@ fun BottomBar(
         }
     }
 }
+
+/*
+@Preview
+@Composable
+fun PreviewHome() {
+    Box(Modifier.fillMaxSize()) {
+        Text("Home Screen")
+    }
+}*/
