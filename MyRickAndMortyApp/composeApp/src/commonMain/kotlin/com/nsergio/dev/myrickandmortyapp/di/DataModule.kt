@@ -2,6 +2,7 @@ package com.nsergio.dev.myrickandmortyapp.di
 
 import com.nsergio.dev.myrickandmortyapp.data.remote.ApiService
 import com.nsergio.dev.myrickandmortyapp.data.remote.RepositoryImpl
+import com.nsergio.dev.myrickandmortyapp.data.remote.paging.PagingCharactersSource
 import com.nsergio.dev.myrickandmortyapp.domain.Repository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -37,6 +38,6 @@ val dataModule = module {
     }
 
     factoryOf(::ApiService)
-
-    factory<Repository> { RepositoryImpl(get()) }
+    factoryOf(::PagingCharactersSource)
+    factory<Repository> { RepositoryImpl(get(), get()) }
 }

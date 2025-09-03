@@ -51,7 +51,8 @@ fun CharactersScreen() {
     LaunchedEffect(Unit) {
         if (!hasLoaded) {
             hasLoaded = true
-            viewModel.loadData()
+            viewModel.loadCharacterOfTheDay()
+            viewModel.loadAllCharacters()
         }
     }
 

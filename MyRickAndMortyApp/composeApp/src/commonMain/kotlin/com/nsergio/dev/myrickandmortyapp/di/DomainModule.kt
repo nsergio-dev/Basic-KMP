@@ -1,5 +1,6 @@
 package com.nsergio.dev.myrickandmortyapp.di
 
+import com.nsergio.dev.myrickandmortyapp.domain.usecase.GetCharactersUseCase
 import com.nsergio.dev.myrickandmortyapp.domain.usecase.GetRandomCharacterUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
@@ -28,4 +29,5 @@ import org.koin.dsl.module
  */
 val domainModule = module {
     factoryOf(::GetRandomCharacterUseCase)
+    factoryOf(::GetCharactersUseCase)
 }
