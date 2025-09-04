@@ -1,8 +1,11 @@
 package com.nsergio.dev.myrickandmortyapp.data.remote.response.characterModel
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Info(
-    val count: Int,
-    val next: String,
+    val count: Int? = 0,
     val pages: Int,
-    val prev: Int = 0
+    val next: String?,
+    val prev: String?
 )

@@ -64,7 +64,7 @@ class CharactersViewModel(
     fun loadAllCharacters() {
 
         viewModelScope.launch(Dispatchers.IO) {
-            delay(getRandomDelay())
+            delay(5_000L)
             val characters = getCharactersUseCase.invoke()
             _state.update { state ->
                 state.copy(charactersPagingData = characters)
@@ -73,12 +73,12 @@ class CharactersViewModel(
         }
     }
 
-    /**
-     * Returns a random delay between 1 and 5 seconds
-     * @return Long
-     */
-    private fun getRandomDelay(): Long {
-        return (1_000L..5_000L).random()
-    }
+}
 
+/**
+ * Returns a random delay between 1 and 5 seconds
+ * @return Long
+ */
+fun getRandomDelay(): Long {
+    return (1_000L..5_000L).random()
 }
