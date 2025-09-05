@@ -13,7 +13,8 @@ fun initKoin(koinConfig: KoinAppDeclaration? = null) {
             listOf(
                 dataModule,
                 domainModule,
-                uiModule
+                uiModule,
+                platformModule()
             )
         )
 

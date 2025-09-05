@@ -9,4 +9,7 @@ interface Repository {
     suspend fun getSingleCharacter(id: Int): SingleCharacterModel
 
     suspend fun getCharacters(): Flow<PagingData<SingleCharacterModel>>
+
+    suspend fun getCharacterFromDB()
+
 }
