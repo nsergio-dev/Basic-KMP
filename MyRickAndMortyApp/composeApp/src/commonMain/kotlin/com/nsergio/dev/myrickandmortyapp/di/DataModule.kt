@@ -1,9 +1,12 @@
 package com.nsergio.dev.myrickandmortyapp.di
 
 import com.nsergio.dev.myrickandmortyapp.data.remote.ApiService
-import com.nsergio.dev.myrickandmortyapp.data.remote.RepositoryImpl
+import com.nsergio.dev.myrickandmortyapp.data.remote.CharacterRepositoryImpl
+import com.nsergio.dev.myrickandmortyapp.data.remote.EpisodeRepositoryImpl
 import com.nsergio.dev.myrickandmortyapp.data.remote.paging.PagingCharactersSource
-import com.nsergio.dev.myrickandmortyapp.domain.Repository
+import com.nsergio.dev.myrickandmortyapp.data.remote.paging.PagingEpisodesSource
+import com.nsergio.dev.myrickandmortyapp.domain.CharacterRepository
+import com.nsergio.dev.myrickandmortyapp.domain.EpisodeRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -39,5 +42,19 @@ val dataModule = module {
 
     factoryOf(::ApiService)
     factoryOf(::PagingCharactersSource)
-    factory<Repository> { RepositoryImpl(get(), get(), get()) }
+    factoryOf(::PagingEpisodesSource)
+    factory<CharacterRepository> {
+        CharacterRepositoryImpl(
+            apiService = get(),
+            pagingSource = get(),
+            database = get()
+        )
+    }
+    factory<EpisodeRepository> {
+        EpisodeRepositoryImpl(
+            apiService = get(),
+            episodesSource = get()
+        )
+    }
+
 }

@@ -2,24 +2,16 @@ package com.nsergio.dev.myrickandmortyapp.features.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
-import com.nsergio.dev.myrickandmortyapp.domain.usecase.GetCharactersUseCase
-import com.nsergio.dev.myrickandmortyapp.domain.usecase.GetRandomCharacterUseCase
+import com.nsergio.dev.myrickandmortyapp.domain.usecase.character.GetCharactersUseCase
+import com.nsergio.dev.myrickandmortyapp.domain.usecase.character.GetRandomCharacterUseCase
+import com.nsergio.dev.myrickandmortyapp.features.home.statemodels.CharacterUIState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-data class CharacterUIState(
-    val characterOfTheDay: SingleCharacterModel? = null,
-    val charactersPagingData: Flow<PagingData<SingleCharacterModel>> = emptyFlow()
-)
 
 class CharactersViewModel(
     private val getRandCharacterUseCase: GetRandomCharacterUseCase,

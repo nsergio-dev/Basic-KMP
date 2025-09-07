@@ -1,7 +1,9 @@
 package com.nsergio.dev.myrickandmortyapp.data.remote
 
-import com.nsergio.dev.myrickandmortyapp.data.remote.response.CharactersApiResponse
-import com.nsergio.dev.myrickandmortyapp.data.remote.response.SingleCharacterResponse
+import com.nsergio.dev.myrickandmortyapp.data.remote.responses.character.CharactersApiResponse
+import com.nsergio.dev.myrickandmortyapp.data.remote.responses.character.SingleCharacterResponse
+import com.nsergio.dev.myrickandmortyapp.data.remote.responses.episodes.EpisodeItemResponse
+import com.nsergio.dev.myrickandmortyapp.data.remote.responses.episodes.EpisodeResponse
 import com.nsergio.dev.myrickandmortyapp.features.home.viewmodel.getRandomDelay
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -33,6 +35,31 @@ class ApiService(private val client: HttpClient) {
         return withContext(Dispatchers.IO) {
             //dummy delay to simulate lazy network call
             delay(getRandomDelay())
+            response
+        }
+    }
+
+    suspend fun getSingleEpisode(id: Int): EpisodeItemResponse {
+        return withContext(Dispatchers.IO) {
+            val request = client.get(urlString = "/api/episode/$id")
+            val response = request.body<EpisodeItemResponse>()
+            delay(getRandomDelay())
+            response
+        }
+    }
+
+    suspend fun getAllEpisodes(page: Int): EpisodeResponse {
+
+        return withContext(Dispatchers.IO) {
+
+            val request = client.get(urlString = "/api/episode") {
+                parameter("page", page)
+            }
+
+            val response = request.body<EpisodeResponse>()
+
+            delay(getRandomDelay())
+
             response
         }
     }
