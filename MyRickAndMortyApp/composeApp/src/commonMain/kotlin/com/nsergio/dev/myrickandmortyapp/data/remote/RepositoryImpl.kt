@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.nsergio.dev.myrickandmortyapp.data.local.RickAndMortyDatabase
 import com.nsergio.dev.myrickandmortyapp.data.remote.paging.PagingCharactersSource
 import com.nsergio.dev.myrickandmortyapp.domain.Repository
+import com.nsergio.dev.myrickandmortyapp.domain.model.CharacterOfTheDayModel
 import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
 import kotlinx.coroutines.flow.Flow
 
@@ -37,8 +38,18 @@ class RepositoryImpl(
         return pager
     }
 
-    override suspend fun getCharacterFromDB() {
-        database.userPreferenceDao().getCharacterOfTheDay()
+    override suspend fun getCharacterFromDB(): CharacterOfTheDayModel? {
+        val characterModel = database.userPreferenceDao().getCharacterOfTheDay()
+        val model = characterModel?.toDomain()
+        return model
+    }
+
+    override suspend fun saveCharacterOfTheDay(
+        characterModel: SingleCharacterModel,
+        currentDay: String
+    ) {
+        val entity = characterModel.toEntity(currentDay)
+        database.userPreferenceDao().createCharacterOfTheDay(characterEntity = entity)
     }
 
     companion object {

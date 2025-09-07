@@ -1,7 +1,10 @@
 package com.nsergio.dev.myrickandmortyapp.domain.usecase
 
 import com.nsergio.dev.myrickandmortyapp.domain.Repository
+import com.nsergio.dev.myrickandmortyapp.domain.model.CharacterOfTheDayModel
 import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
+import com.nsergio.dev.myrickandmortyapp.features.home.viewmodel.getRandomDelay
+import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -11,14 +14,23 @@ class GetRandomCharacterUseCase(private val repository: Repository) {
 
     suspend operator fun invoke(): SingleCharacterModel {
         val currentDay = getCurrentDayOfTheYear()
-        val caracterFromDB = repository.getCharacterFromDB()
-        /*if (currentDay == caracterFromDB.date) {
+        val characterFromDB: CharacterOfTheDayModel? = repository.getCharacterFromDB()
+        if (characterFromDB != null && characterFromDB.selectedDay == currentDay) {
+            val model = characterFromDB.model
+            return model
+        } else {
+            val characterModel = getRandomCharacterFromRemote()
+            repository.saveCharacterOfTheDay(characterModel, currentDay)
+            delay(getRandomDelay())
+            return characterModel
+        }
+    }
 
-        }*/
-        caracterFromDB
+    private suspend fun getRandomCharacterFromRemote(): SingleCharacterModel {
         val maxCharacters = 826
         val idCharacter = (1..maxCharacters).random()
-        return repository.getSingleCharacter(id = idCharacter)
+        val character = repository.getSingleCharacter(id = idCharacter)
+        return character
     }
 
     private fun getCurrentDayOfTheYear(): String {
@@ -29,6 +41,6 @@ class GetRandomCharacterUseCase(private val repository: Repository) {
         )
 
         val date = "${localTime.dayOfYear} - ${localTime.year}"
-        return  date
+        return date
     }
 }

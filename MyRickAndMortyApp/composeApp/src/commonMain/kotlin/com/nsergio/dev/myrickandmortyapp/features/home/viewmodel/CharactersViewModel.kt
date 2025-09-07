@@ -3,6 +3,7 @@ package com.nsergio.dev.myrickandmortyapp.features.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
 import com.nsergio.dev.myrickandmortyapp.domain.usecase.GetCharactersUseCase
 import com.nsergio.dev.myrickandmortyapp.domain.usecase.GetRandomCharacterUseCase
@@ -46,8 +47,6 @@ class CharactersViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
 
-            delay(getRandomDelay())
-
             val character = getRandCharacterUseCase.invoke()
 
             //_state.value = _state.value.copy(characterOfTheDay = character)
@@ -65,7 +64,7 @@ class CharactersViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             delay(5_000L)
-            val characters = getCharactersUseCase.invoke()
+            val characters = getCharactersUseCase.invoke().cachedIn(viewModelScope)
             _state.update { state ->
                 state.copy(charactersPagingData = characters)
             }
