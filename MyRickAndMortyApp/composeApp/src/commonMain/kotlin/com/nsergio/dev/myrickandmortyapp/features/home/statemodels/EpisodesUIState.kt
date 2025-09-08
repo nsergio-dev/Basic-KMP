@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.emptyFlow
 
 data class EpisodesUIState(
 
-    val charactersPagingData: Flow<PagingData<EpisodeModel>> = emptyFlow()
+    val charactersPagingData: Flow<PagingData<EpisodeModel>> = emptyFlow(),
 )

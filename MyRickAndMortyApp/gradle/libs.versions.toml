@@ -29,6 +29,10 @@ androidx-room = "2.7.2"
 ksp = "2.2.0-2.0.2"
 androidx-sqliteBundled = "2.5.2"
 
+# for videos
+media3 = "1.4.1"
+androidx-browser = "1.8.0"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -78,6 +82,13 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqliteBundled" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
+
+# for video
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
+
+# custom googel tabs
+androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
