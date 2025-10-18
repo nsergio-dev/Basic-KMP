@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nsergio.dev.myrickandmortyapp.core.navigation.bottonnavigation.BottomBarItem
@@ -20,7 +21,9 @@ import com.nsergio.dev.myrickandmortyapp.core.navigation.bottonnavigation.Bottom
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    mainNavController: NavHostController
+) {
 
     val bottomBarItems = BottomBarItem.entries.toList()
     val navController = rememberNavController()
@@ -37,8 +40,7 @@ fun HomeScreen() {
         },
         content = {
             Box(Modifier.fillMaxSize()) {
-                //Text("Home Screen")
-                BottomNavWrapper(navController)
+                BottomNavWrapper(navController, mainNavController)
             }
         }
     )

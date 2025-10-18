@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nsergio.dev.myrickandmortyapp.data.local.RickAndMortyDatabase
 import com.nsergio.dev.myrickandmortyapp.data.remote.paging.PagingCharactersSource
+import com.nsergio.dev.myrickandmortyapp.data.remote.responses.episodes.EpisodeItemResponse
 import com.nsergio.dev.myrickandmortyapp.domain.CharacterRepository
 import com.nsergio.dev.myrickandmortyapp.domain.model.CharacterOfTheDayModel
 import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
@@ -50,6 +51,11 @@ class CharacterRepositoryImpl(
     ) {
         val entity = characterModel.toEntity(currentDay)
         database.userPreferenceDao().createCharacterOfTheDay(characterEntity = entity)
+    }
+
+    override suspend fun getEpisodesFromAPI(episodesId: List<String>): List<EpisodeItemResponse> {
+        val episodes = apiService.getEpisodes(episodesId)
+        return episodes
     }
 
     companion object Companion {

@@ -1,7 +1,9 @@
 package com.nsergio.dev.myrickandmortyapp.di
 
 import com.nsergio.dev.myrickandmortyapp.domain.usecase.character.GetCharactersUseCase
+import com.nsergio.dev.myrickandmortyapp.domain.usecase.episodes.GetEpisodesUseCase
 import com.nsergio.dev.myrickandmortyapp.domain.usecase.character.GetRandomCharacterUseCase
+import com.nsergio.dev.myrickandmortyapp.domain.usecase.episodes.GetEpisodeUseCase
 import com.nsergio.dev.myrickandmortyapp.domain.usecase.episodes.GetEpisodesPagerUserCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
@@ -31,5 +33,7 @@ import org.koin.dsl.module
 val domainModule = module {
     factoryOf(::GetRandomCharacterUseCase)
     factoryOf(::GetCharactersUseCase)
+    factoryOf(::GetEpisodesUseCase)
+    factoryOf(::GetEpisodeUseCase)
     factoryOf(::GetEpisodesPagerUserCase)
 }

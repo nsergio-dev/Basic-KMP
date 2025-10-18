@@ -3,6 +3,7 @@ package com.nsergio.dev.myrickandmortyapp.features.home.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -59,7 +60,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharactersScreen() {
+fun CharactersScreen(
+    onCharacterClick: (SingleCharacterModel) -> Unit
+) {
 
     val viewModel = koinViewModel<CharactersViewModel>()
 
@@ -87,7 +90,8 @@ fun CharactersScreen() {
         ) {
             CharactersList(
                 characterOFTheDay = state.characterOfTheDay,
-                characters = pagingData
+                characters = pagingData,
+                onCharacterClick = onCharacterClick
             )
         }
     }
@@ -96,7 +100,8 @@ fun CharactersScreen() {
 @Composable
 fun CharactersList(
     characterOFTheDay: SingleCharacterModel?,
-    characters: LazyPagingItems<SingleCharacterModel>
+    characters: LazyPagingItems<SingleCharacterModel>,
+    onCharacterClick: (SingleCharacterModel) -> Unit = {}
 ) {
 
     val gridItemSpan = GridItemSpan(2)
@@ -114,7 +119,7 @@ fun CharactersList(
         stickyHeader { TitleCharacterOfTheDay() }
 
         item(span = { gridItemSpan }) {
-            UserOfTheDay(characterOFTheDay)
+            UserOfTheDay(characterOFTheDay, onCharacterClick)
         }
 
         item(span = { gridItemSpan }) {
@@ -155,7 +160,7 @@ fun CharactersList(
                 items(characters.itemCount) { index ->
                     val item = characters[index]
                     item?.let {
-                        CharacterItemList(item)
+                        CharacterItemList(item, onCharacterClick)
                     }
                 }
             }
@@ -219,7 +224,10 @@ private fun TitleCharacterOfTheDay() {
 }
 
 @Composable
-fun CharacterItemList(characterModel: SingleCharacterModel) {
+fun CharacterItemList(
+    characterModel: SingleCharacterModel,
+    onCharacterClick: (SingleCharacterModel) -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(24))
@@ -228,7 +236,10 @@ fun CharacterItemList(characterModel: SingleCharacterModel) {
                 shape = RoundedCornerShape(0, 24, 0, 24)
             )
             .fillMaxWidth()
-            .height(150.dp),
+            .height(150.dp)
+            .clickable {
+                onCharacterClick.invoke(characterModel)
+            },
         contentAlignment = Alignment.BottomCenter
     ) {
         AsyncImage(
@@ -256,7 +267,8 @@ fun CharacterItemList(characterModel: SingleCharacterModel) {
 
 @Composable
 fun UserOfTheDay(
-    model: SingleCharacterModel? = null
+    model: SingleCharacterModel? = null,
+    onCharacterClick: (SingleCharacterModel) -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().size(200.dp, 300.dp), shape = RoundedCornerShape(12)
@@ -270,7 +282,11 @@ fun UserOfTheDay(
                     model = model.image,
                 ) {
                     Image(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable {
+                                onCharacterClick(model)
+                            },
                         painter = it,
                         contentDescription = "Character of the day image",
                         contentScale = ContentScale.Crop,

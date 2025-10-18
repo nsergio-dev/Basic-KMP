@@ -7,9 +7,10 @@ import androidx.navigation.compose.composable
 import com.nsergio.dev.myrickandmortyapp.core.navigation.Destinations
 import com.nsergio.dev.myrickandmortyapp.features.home.screens.CharactersScreen
 import com.nsergio.dev.myrickandmortyapp.features.home.screens.EpisodesScreen
+import kotlinx.serialization.json.Json
 
 @Composable
-fun BottomNavWrapper(navController: NavHostController) {
+fun BottomNavWrapper(navController: NavHostController, mainNavHostController: NavHostController) {
 
     NavHost(
         navController = navController,
@@ -20,8 +21,15 @@ fun BottomNavWrapper(navController: NavHostController) {
             EpisodesScreen()
         }
 
-        composable(Destinations.Characters.destination) {
-            CharactersScreen()
+        composable(route = Destinations.Characters.destination) {
+            CharactersScreen(
+                onCharacterClick = {
+                    val encode = Json.encodeToString(it)
+                    mainNavHostController.navigate(
+                        Destinations.CharacterDetail(model = encode)
+                    )
+                }
+            )
         }
     }
 

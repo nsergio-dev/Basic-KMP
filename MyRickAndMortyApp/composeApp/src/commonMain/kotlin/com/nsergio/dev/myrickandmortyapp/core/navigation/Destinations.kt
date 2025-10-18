@@ -1,5 +1,7 @@
 package com.nsergio.dev.myrickandmortyapp.core.navigation
 
+import kotlinx.serialization.Serializable
+
 sealed class Destinations(val destination: String) {
 
     data object Home : Destinations("home")
@@ -8,5 +10,10 @@ sealed class Destinations(val destination: String) {
 
     data object Episodes : Destinations("episodes")
     data object Characters : Destinations("characters")
+
+    @Serializable
+    data class CharacterDetail(
+        val model: String
+    )
 
 }

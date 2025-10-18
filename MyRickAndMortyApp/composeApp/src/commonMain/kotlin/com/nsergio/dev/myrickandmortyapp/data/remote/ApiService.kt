@@ -39,7 +39,7 @@ class ApiService(private val client: HttpClient) {
         }
     }
 
-    suspend fun getSingleEpisode(id: Int): EpisodeItemResponse {
+    suspend fun getSingleEpisode(id: String): EpisodeItemResponse {
         return withContext(Dispatchers.IO) {
             val request = client.get(urlString = "/api/episode/$id")
             val response = request.body<EpisodeItemResponse>()
@@ -63,4 +63,20 @@ class ApiService(private val client: HttpClient) {
             response
         }
     }
+
+    suspend fun getEpisodes(episodesId: List<String>): List<EpisodeItemResponse> {
+
+        return withContext(Dispatchers.IO) {
+
+            val episodes = episodesId.joinToString(",")
+
+            val request = client.get(urlString = "api/episode/$episodes")
+
+            val response = request.body<List<EpisodeItemResponse>>()
+
+            response
+        }
+
+    }
+
 }

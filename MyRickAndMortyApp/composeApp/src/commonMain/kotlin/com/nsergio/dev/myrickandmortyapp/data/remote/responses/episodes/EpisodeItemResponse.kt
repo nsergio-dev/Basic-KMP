@@ -20,7 +20,7 @@ data class EpisodeItemResponse(
 
     fun toDomain(): EpisodeModel {
         val idCharacter = characters.map { url ->
-            url.substringAfter("/")
+            url.substringAfterLast("/")
         }
 
         return EpisodeModel(

@@ -9,19 +9,33 @@ data class SingleCharacterResponse(
 
     @SerialName("id")
     val idCharacter: Int,
-    val status: String,
     val name: String,
+    val status: String,
+    @SerialName("species")
+    val specie: String,
     val gender: String,
-    val image: String
+    val origin: OriginCharacterModelResponse,
+    val location: LocationCharacterModelResponse,
+    val image: String,
+    @SerialName("episode")
+    val episodes: List<String>,
+    val url: String,
+    val created: String
 
 ) {
     fun toDomain(): SingleCharacterModel {
         return SingleCharacterModel(
             id = idCharacter,
             name = name,
-            isAlive = status.equals("alive", ignoreCase = true),
+            status = status,
+            specie = specie,
             gender = gender,
-            image = image
+            origin = origin.toDomain(),
+            location = location.toDomain(),
+            image = image,
+            episodes = episodes.map { it.substringAfterLast("/") },
+            url = url,
+            created = created
         )
     }
 }

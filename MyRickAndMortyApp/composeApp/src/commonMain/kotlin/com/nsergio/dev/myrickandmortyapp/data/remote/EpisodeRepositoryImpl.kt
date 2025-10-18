@@ -13,11 +13,23 @@ class EpisodeRepositoryImpl(
     private val episodesSource: PagingEpisodesSource,
 ) : EpisodeRepository {
 
-    override suspend fun getSingleEpisode(id: Int): EpisodeModel {
+    override suspend fun getSingleEpisode(id: String): EpisodeModel {
         val response = apiService.getSingleEpisode(id)
         val model = response.toDomain()
         return model
 
+    }
+
+    override suspend fun getEpisodeFromAPI(id: String): EpisodeModel {
+        val response = apiService.getSingleEpisode(id)
+        val model = response.toDomain()
+        return model
+    }
+
+    override suspend fun getEpisodesFromAPI(episodesId: List<String>): List<EpisodeModel> {
+        val response = apiService.getEpisodes(episodesId)
+        val models = response.map { it.toDomain() }
+        return models
     }
 
     override suspend fun getEpisodesPager(): Flow<PagingData<EpisodeModel>> {
