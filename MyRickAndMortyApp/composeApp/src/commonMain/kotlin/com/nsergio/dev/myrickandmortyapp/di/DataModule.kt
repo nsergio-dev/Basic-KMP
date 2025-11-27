@@ -3,10 +3,12 @@ package com.nsergio.dev.myrickandmortyapp.di
 import com.nsergio.dev.myrickandmortyapp.data.remote.ApiService
 import com.nsergio.dev.myrickandmortyapp.data.remote.CharacterRepositoryImpl
 import com.nsergio.dev.myrickandmortyapp.data.remote.EpisodeRepositoryImpl
+import com.nsergio.dev.myrickandmortyapp.data.remote.SeasonRepositoryImpl
 import com.nsergio.dev.myrickandmortyapp.data.remote.paging.PagingCharactersSource
 import com.nsergio.dev.myrickandmortyapp.data.remote.paging.PagingEpisodesSource
 import com.nsergio.dev.myrickandmortyapp.domain.CharacterRepository
 import com.nsergio.dev.myrickandmortyapp.domain.EpisodeRepository
+import com.nsergio.dev.myrickandmortyapp.domain.SeasonRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -55,6 +57,9 @@ val dataModule = module {
             apiService = get(),
             episodesSource = get()
         )
+    }
+    factory<SeasonRepository> {
+        SeasonRepositoryImpl(apiService = get())
     }
 
 }

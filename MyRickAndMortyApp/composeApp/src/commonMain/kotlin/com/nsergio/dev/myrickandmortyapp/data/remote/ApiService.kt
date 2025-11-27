@@ -58,10 +58,32 @@ class ApiService(private val client: HttpClient) {
 
             val response = request.body<EpisodeResponse>()
 
-            delay(getRandomDelay())
-
             response
         }
+    }
+
+    suspend fun getAllEpisodes(): List<EpisodeItemResponse> = withContext(Dispatchers.IO) {
+
+        val allEpisodes = mutableListOf<EpisodeItemResponse>()
+        var currentPage = 1
+        var totalPages: Int? = null
+
+        while (true) {
+
+            val response = getAllEpisodes(currentPage)
+
+            allEpisodes += response.results
+
+            if (totalPages == null) {
+                totalPages = response.info.pages
+            }
+
+            if (currentPage >= totalPages) break
+
+            currentPage++
+        }
+
+        return@withContext allEpisodes
     }
 
     suspend fun getEpisodes(episodesId: List<String>): List<EpisodeItemResponse> {

@@ -2,8 +2,7 @@ package com.nsergio.dev.myrickandmortyapp.features.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
-import com.nsergio.dev.myrickandmortyapp.domain.usecase.episodes.GetEpisodesPagerUserCase
+import com.nsergio.dev.myrickandmortyapp.domain.usecase.season.GetAllSeasonsUseCase
 import com.nsergio.dev.myrickandmortyapp.features.home.statemodels.EpisodesUIState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class EpisodesViewModel(
-    private val episodesPager: GetEpisodesPagerUserCase
+    private val getAllSeasonsUseCase: GetAllSeasonsUseCase
 ) : ViewModel() {
 
     private val _videoUrl = MutableStateFlow("")
@@ -23,11 +22,11 @@ class EpisodesViewModel(
     private val _state: MutableStateFlow<EpisodesUIState> = MutableStateFlow(EpisodesUIState())
     val state: StateFlow<EpisodesUIState> = _state
 
-    fun loadEpisodes() {
+    fun loadSeasons() {
         viewModelScope.launch(Dispatchers.IO) {
-            val pager = episodesPager.invoke().cachedIn(viewModelScope)
+            val seasons = getAllSeasonsUseCase.invoke()
             _state.update { currentState ->
-                currentState.copy(charactersPagingData = pager)
+                currentState.copy(seasons = seasons)
             }
         }
     }

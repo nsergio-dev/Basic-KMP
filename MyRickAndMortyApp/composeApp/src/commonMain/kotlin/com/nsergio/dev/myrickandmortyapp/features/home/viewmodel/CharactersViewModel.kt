@@ -71,5 +71,5 @@ class CharactersViewModel(
  * @return Long
  */
 fun getRandomDelay(): Long {
-    return (1_000L..5_000L).random()
+    return (1_000L..3_000L).random()
 }
