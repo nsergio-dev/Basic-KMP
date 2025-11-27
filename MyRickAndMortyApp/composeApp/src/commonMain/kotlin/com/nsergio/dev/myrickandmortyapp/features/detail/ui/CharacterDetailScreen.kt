@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -39,14 +41,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.nsergio.dev.myrickandmortyapp.core.borderLife
+import com.nsergio.dev.myrickandmortyapp.core.ui.Green
+import com.nsergio.dev.myrickandmortyapp.core.ui.Pink
+import com.nsergio.dev.myrickandmortyapp.core.ui.backgroundPrimary
+import com.nsergio.dev.myrickandmortyapp.core.ui.backgroundSecondary
+import com.nsergio.dev.myrickandmortyapp.core.ui.backgroundTertiary
+import com.nsergio.dev.myrickandmortyapp.core.ui.defaultTextColor
+import com.nsergio.dev.myrickandmortyapp.core.ui.tertiaryWhite
 import com.nsergio.dev.myrickandmortyapp.domain.model.EpisodeModel
 import com.nsergio.dev.myrickandmortyapp.domain.model.LocationCharacterModel
 import com.nsergio.dev.myrickandmortyapp.domain.model.OriginCharacterModel
+import com.nsergio.dev.myrickandmortyapp.domain.model.SeasonEpisode
 import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
+import com.nsergio.dev.myrickandmortyapp.features.detail.statemodels.CharacterDetailUiState
 import com.nsergio.dev.myrickandmortyapp.features.home.viewmodel.CharacterDetailViewModel
 import myrickandmortyapp.composeapp.generated.resources.Res
 import myrickandmortyapp.composeapp.generated.resources.background_space
@@ -70,8 +82,8 @@ fun CharacterDetailScreen(
     )
 
     val uiState by viewModel.uiState.collectAsState()
-
     val episodes = uiState.characterEpisodes
+
     LaunchedEffect(Unit) {
         viewModel.getEpisodes(model.episodes)
     }
@@ -79,37 +91,60 @@ fun CharacterDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text("Detail")
+                title = { Text("Detail") },
+                navigationIcon = {
+                    Image(
+                        painter = painterResource(Res.drawable.rick_face),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .size(32.dp)
+                            .clip(CircleShape)
+                    )
                 }
             )
         }
     ) { innerPadding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color.White),
-        ) {
+        BodyScreen(innerPadding, uiState, model, episodes, lazyListState)
+    }
+}
 
-            if (uiState.isLoading || uiState.character == null) {
+@Composable
+private fun BodyScreen(
+    innerPadding: PaddingValues,
+    uiState: CharacterDetailUiState,
+    model: SingleCharacterModel,
+    episodes: List<EpisodeModel>?,
+    lazyListState: LazyListState
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .background(backgroundPrimary)
+    ) {
+
+        if (uiState.isLoading || uiState.character == null) {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 CircularProgressIndicator(
-                    modifier = Modifier.padding(20.dp).fillMaxSize()
-                )
-            } else {
-                MainHeader(model = model)
-                CharacterInformation(model = model)
-                EpisodesList(
-                    episodes = episodes,
-                    state = lazyListState,
-                    onClick =  {
-
-                    }
+                    color = Pink,
+                    strokeWidth = 4.dp,
+                    modifier = Modifier.size(60.dp)
                 )
             }
+        } else {
+            MainHeader(model)
+            CharacterInformation(model)
+            EpisodesList(
+                episodes = episodes,
+                state = lazyListState,
+                onClick = {}
+            )
         }
     }
-
 }
 
 @Composable
@@ -121,33 +156,28 @@ private fun ColumnScope.EpisodesList(
     Card(
         modifier = Modifier
             .weight(1f)
-            .padding(vertical = 16.dp)
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)
             .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundSecondary)
     ) {
 
         if (episodes == null) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.padding(20.dp).fillMaxSize(),
-                    color = Color.Green
-                )
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Pink)
             }
         } else {
-
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
                 state = state,
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(episodes) { item ->
                     EpisodeItem(item)
                 }
-
             }
         }
     }
@@ -155,20 +185,63 @@ private fun ColumnScope.EpisodesList(
 
 @Composable
 fun EpisodeItem(model: EpisodeModel) {
-    Text(model.name)
-    Text(model.episode)
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.elevatedCardElevation(4.dp)
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    model.name,
+                    color = defaultTextColor,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    model.episode,
+                    color = Green,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(Modifier.width(12.dp))
+
+            Text(
+                text = model.airDate,
+                color = defaultTextColor.copy(alpha = 0.7f),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
 }
 
 @Composable
 fun CharacterInformation(model: SingleCharacterModel) {
     ElevatedCard(
         modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(containerColor = backgroundTertiary)
     ) {
-        Column {
-            Text("About the character - ${model.name}")
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                "About the character - ${model.name}",
+                color = defaultTextColor,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(12.dp))
             InformationDetail("Origin: ", model.origin.name)
+            Spacer(Modifier.height(4.dp))
             InformationDetail("Location: ", model.location.name)
         }
     }
@@ -177,8 +250,8 @@ fun CharacterInformation(model: SingleCharacterModel) {
 @Composable
 fun InformationDetail(title: String, detail: String) {
     Row {
-        Text(title, fontWeight = FontWeight.Bold, color = Color.White)
-        Text(detail, color = Color.Green)
+        Text(title, fontWeight = FontWeight.Bold, color = defaultTextColor)
+        Text(detail, color = defaultTextColor)
     }
 }
 
@@ -186,7 +259,9 @@ fun InformationDetail(title: String, detail: String) {
 private fun MainHeader(model: SingleCharacterModel) {
 
     Box(
-        modifier = Modifier.fillMaxWidth().height(300.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(330.dp)
     ) {
 
         Image(
@@ -197,7 +272,6 @@ private fun MainHeader(model: SingleCharacterModel) {
         )
 
         CharacterHeader(model)
-
     }
 }
 
@@ -212,39 +286,37 @@ private fun CharacterHeader(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(
-                    shape = RoundedCornerShape(
-                        topStartPercent = 10,
-                        topEndPercent = 10
-                    )
-                )
-                .background(Color.White),
-            verticalArrangement = Arrangement.Center,
+                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .background(backgroundSecondary)
+                .padding(top = 90.dp, bottom = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(40.dp))
             Text(
                 text = model.name,
-                color = Color.Black,
-                fontSize = 24.sp,
+                color = defaultTextColor,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
-            Text(text = model.gender, color = Color.Black)
-            Text(text = model.specie, color = Color.Black)
+            Text(model.gender, color = defaultTextColor.copy(alpha = 0.8f))
+            Text(model.specie, color = defaultTextColor.copy(alpha = 0.8f))
         }
 
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(15.dp))
-            Box(contentAlignment = Alignment.TopCenter) {
+
+            Spacer(Modifier.height(12.dp))
+
+            Box(contentAlignment = Alignment.Center) {
+
                 val isAlive = model.status == "alive"
+
                 Box(
                     modifier = Modifier
-                        .size(205.dp)
+                        .size(210.dp)
                         .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.15f)),
+                        .background(Color.Black.copy(alpha = 0.18f)),
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
@@ -253,30 +325,30 @@ private fun CharacterHeader(
                             .clip(CircleShape)
                             .borderLife(isAlive),
                         model = model.image,
-                        contentDescription = "Character of the day image - ${model.name}",
+                        contentDescription = null,
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(Res.drawable.rick_face)
                     )
                 }
+
                 Text(
                     modifier = Modifier
-                        .clip(
-                            shape = RoundedCornerShape(percent = 30)
-                        )
+                        .align(Alignment.BottomCenter)
+                        .padding(top = 160.dp)
+                        .clip(RoundedCornerShape(40))
                         .background(Color.White)
-                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
                     text = if (isAlive) "Alive" else "Dead",
-                    color = if (isAlive) Color.Green else Color.Red,
-                    fontSize = 24.sp,
+                    color = if (isAlive) Green else Color.Red,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(Modifier.weight(1f))
         }
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun CharacterDetailScreenPreview() {
     val model = SingleCharacterModel(
@@ -292,5 +364,30 @@ fun CharacterDetailScreenPreview() {
         url = "",
         created = "",
     )
-    MainHeader(model = model)
+    val paddingValues = PaddingValues(16.dp)
+    val lazyListState = rememberLazyListState()
+
+    val state = CharacterDetailUiState(
+        character = model,
+        characterEpisodes = listOf(
+            EpisodeModel(
+                id = 1,
+                name = "Rick Sanchez",
+                episode = "S01E01",
+                url = "",
+                season = SeasonEpisode.SEASON_1,
+                airDate = "2017-11-10",
+                characters = listOf(model.name)
+            )
+        )
+    )
+
+    BodyScreen(
+        innerPadding = paddingValues,
+        uiState = state,
+        lazyListState = lazyListState,
+        episodes = state.characterEpisodes,
+        model = model
+    )
+
 }
