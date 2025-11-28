@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -23,8 +22,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,6 +49,7 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.nsergio.dev.myrickandmortyapp.common.RemoteAsyncImage
+import com.nsergio.dev.myrickandmortyapp.core.ui.defaultTextColor
 import com.nsergio.dev.myrickandmortyapp.core.vertical
 import com.nsergio.dev.myrickandmortyapp.domain.model.SingleCharacterModel
 import com.nsergio.dev.myrickandmortyapp.features.home.viewmodel.CharactersViewModel
@@ -65,11 +65,8 @@ fun CharactersScreen(
 ) {
 
     val viewModel = koinViewModel<CharactersViewModel>()
-
     val state by viewModel.state.collectAsState()
-
     val pagingData = state.charactersPagingData.collectAsLazyPagingItems()
-
     var hasLoaded by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -80,13 +77,21 @@ fun CharactersScreen(
         }
     }
 
+
     Scaffold(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) { paddingValues ->
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Episodes",
+                        color = defaultTextColor
+                    )
+                }
+            )
+        }
+    ) { innerPadding ->
         Box(
-            Modifier
-                .statusBarsPadding()
-                .padding(paddingValues),
+            Modifier.padding(innerPadding),
         ) {
             CharactersList(
                 characterOFTheDay = state.characterOfTheDay,
@@ -106,32 +111,23 @@ fun CharactersList(
 
     val gridItemSpan = GridItemSpan(2)
 
+
+    val isEmptyCharacters = characters.itemCount == 0
+    val defaultGridSpan = gridItemSpan
     LazyVerticalGrid(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         columns = GridCells.Fixed(2),
         state = rememberLazyGridState(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        val isEmptyCharacters = characters.itemCount == 0
-        val defaultGridSpan = gridItemSpan
 
-        stickyHeader { TitleCharacterOfTheDay() }
+        item { TitleCharacterOfTheDay() }
 
         item(span = { gridItemSpan }) {
             UserOfTheDay(characterOFTheDay, onCharacterClick)
-        }
-
-        item(span = { gridItemSpan }) {
-            TextFillColumns()
-        }
-
-        item {
-            TextFillOnceColumn()
-        }
-
-        stickyHeader {
-            TitleListCharacter()
         }
 
         validateState(
@@ -147,25 +143,19 @@ fun CharactersList(
                     CircularProgress(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            //toma el ancho y la altura se la damos
                             .fillMaxHeight()
-                            //la altura
                             .height(100.dp)
                     )
                 }
             },
-
             shouldShowContent = {
-
                 items(characters.itemCount) { index ->
-                    val item = characters[index]
-                    item?.let {
-                        CharacterItemList(item, onCharacterClick)
+                    characters[index]?.let {
+                        CharacterItemList(it, onCharacterClick)
                     }
                 }
             }
         )
-
     }
 }
 
@@ -185,42 +175,28 @@ private fun CircularProgress(
 
 @Composable
 private fun UnknowError() {
-    Text(text = "Unknow error loading characters")
-}
-
-@Composable
-private fun TitleListCharacter() {
-    Surface(
-        Modifier.fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(top = 16.dp)
-            .clip(RoundedCornerShape(24))
-            .border(
-                2.dp, Color.Gray,
-                shape = RoundedCornerShape(0, 24, 0, 24)
-            )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp),
-            text = "Characters - Sticky Header example"
-        )
+        Text(text = "Unknow error loading characters", color = Color.Red)
     }
 }
 
 @Composable
-private fun TextFillOnceColumn() {
-    Text(modifier = Modifier.background(Color.Blue), text = "Item que ocupa 1 col")
-}
-
-@Composable
-private fun TextFillColumns() {
-    Text(modifier = Modifier.background(Color.Red), text = "Texto que ocupa 2 cols")
-}
-
-@Composable
 private fun TitleCharacterOfTheDay() {
-    Text("Character of the day - Sticky Header example")
+    Box(
+        Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "Character of the day",
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
+    }
 }
 
 @Composable
@@ -232,35 +208,45 @@ fun CharacterItemList(
         modifier = Modifier
             .clip(RoundedCornerShape(24))
             .border(
-                2.dp, Green,
+                2.dp,
+                Green,
                 shape = RoundedCornerShape(0, 24, 0, 24)
             )
             .fillMaxWidth()
             .height(150.dp)
-            .clickable {
-                onCharacterClick.invoke(characterModel)
-            },
+            .clickable { onCharacterClick.invoke(characterModel) },
         contentAlignment = Alignment.BottomCenter
     ) {
+
         AsyncImage(
             model = characterModel.image,
-            contentDescription = "Character of the day image - ${characterModel.name}",
+            contentDescription = "Character ${characterModel.name}",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
             placeholder = painterResource(Res.drawable.rick_face)
         )
+
         Box(
-            modifier = Modifier.fillMaxWidth().height(60.dp).background(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color.Black.copy(0f),
-                        Color.Black.copy(0.6f),
-                        Color.Black.copy(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Black.copy(alpha = 0f),
+                            Color.Black.copy(alpha = 0.6f),
+                            Color.Black.copy(alpha = 1f)
+                        )
                     )
-                )
-            ), contentAlignment = Alignment.Center
+                ),
+            contentAlignment = Alignment.Center
         ) {
-            Text(characterModel.name, color = Color.White, fontSize = 18.sp)
+            Text(
+                characterModel.name,
+                color = Color.White,
+                fontSize = 18.sp,
+                maxLines = 1
+            )
         }
     }
 }
@@ -271,28 +257,29 @@ fun UserOfTheDay(
     onCharacterClick: (SingleCharacterModel) -> Unit = {}
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().size(200.dp, 300.dp), shape = RoundedCornerShape(12)
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(200.dp, 300.dp),
+        shape = RoundedCornerShape(12)
     ) {
         if (model == null) {
             CircularProgress(modifier = Modifier.fillMaxSize())
         } else {
             Box(contentAlignment = Alignment.BottomStart) {
 
-                RemoteAsyncImage(
-                    model = model.image,
-                ) {
+                RemoteAsyncImage(model = model.image) {
                     Image(
                         modifier = Modifier
                             .fillMaxSize()
-                            .clickable {
-                                onCharacterClick(model)
-                            },
+                            .clickable { onCharacterClick(model) },
                         painter = it,
                         contentDescription = "Character of the day image",
                         contentScale = ContentScale.Crop,
                     )
                 }
+
                 Gradient()
+
                 Text(
                     modifier = Modifier
                         .padding(horizontal = 24.dp, vertical = 16.dp)
@@ -306,8 +293,6 @@ fun UserOfTheDay(
                     maxLines = 1,
                     minLines = 1,
                     overflow = TextOverflow.Ellipsis
-
-
                 )
             }
         }
@@ -337,18 +322,14 @@ private fun validateState(
     shouldShowContent: () -> Unit
 ) {
     when {
-        state.refresh is LoadState.Error -> {
-            shouldShowError.invoke()
-        }
+        state.refresh is LoadState.Error -> shouldShowError()
 
-        state.refresh is LoadState.Loading && isEmptyCharacters -> {
-            shouldShowLoading.invoke()
-        }
+        state.refresh is LoadState.Loading && isEmptyCharacters -> shouldShowLoading()
 
         else -> {
-            shouldShowContent.invoke()
+            shouldShowContent()
             if (state.append is LoadState.Loading) {
-                shouldShowLoading.invoke()
+                shouldShowLoading()
             }
         }
     }

@@ -187,7 +187,8 @@ private fun ColumnScope.EpisodesList(
 fun EpisodeItem(model: EpisodeModel) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.elevatedCardElevation(4.dp)
+        elevation = CardDefaults.elevatedCardElevation(4.dp),
+        colors = CardDefaults.elevatedCardColors(containerColor = backgroundTertiary)
     ) {
         Row(
             Modifier
